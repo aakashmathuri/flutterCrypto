@@ -1,29 +1,18 @@
-import 'dart:async';
-import 'dart:convert';
-import 'package:http/http.dart' as http;
+
 
 import 'package:flutter/material.dart';
 
 class HomePage extends StatefulWidget {
+  final List currencies;
+    HomePage(this.currencies);
   @override
   _HomePageState createState() => _HomePageState();
 }
 
 class _HomePageState extends State<HomePage> {
+
   List currencies;
   final List<MaterialColor> _colors = [Colors.blue, Colors.indigo, Colors.red];
-
-  @override
-  void initState() async {
-    super.initState();
-    currencies = await getCurrencies();
-  }
-
-  Future<List> getCurrencies() async {
-    String cryptoUrl = "https://api.coinmarketcap.com/v1/ticker/?limit=50";
-    http.Response response = await http.get(cryptoUrl);
-    return json.decode(response.body);
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -37,16 +26,20 @@ class _HomePageState extends State<HomePage> {
 
   Widget _cryptoWidget() {
     return Container(
-      child: Flexible(
-        child: ListView.builder(
-          itemCount: currencies.length,
-          itemBuilder: (BuildContext context, int index) {
-            final Map currency = currencies[index];
-            final MaterialColor color = _colors[index % _colors.length];
+      child: Column(
+        children: <Widget>[
+          Flexible(
+            child: ListView.builder(
+              itemCount: widget.currencies.length,
+              itemBuilder: (BuildContext context, int index) {
+                final Map currency = widget.currencies[index];
+                final MaterialColor color = _colors[index % _colors.length];
 
-            return _getListItem(currency, color);
-          },
-        ),
+                return _getListItem(currency, color);
+              },
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -65,6 +58,7 @@ class _HomePageState extends State<HomePage> {
         currency['price_usd'],
         currency['percent_change_1h'],
       ),
+      isThreeLine: true,
     );
   }
 
